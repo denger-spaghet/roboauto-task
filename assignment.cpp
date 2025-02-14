@@ -47,8 +47,18 @@ int getClosestToZero(const std::vector<int>& arr) {
  */
 std::size_t countChunks(const std::vector<int>& arr) {
     if (arr.empty()) throw std::invalid_argument("array is empty");
-    
-    return 0;
+
+    std::size_t cnt = 0;
+    auto it = arr.begin();
+
+    while(it != arr.end()) {
+        it = std::ranges::find_if(it, arr.end(), [](int x) { return x != 0; }); 
+        if(it == arr.end()) break;
+        cnt ++;
+        it = std::ranges::find(it, arr.end(), 0);
+    }
+
+    return cnt;
 }
 
 /**
@@ -84,9 +94,12 @@ std::vector<std::size_t> getReversalsToSort(const std::vector<int>& arr) {
 }
 
 int main() {
-    std::vector<int> in1 = {-9,5,-1,8,6, 1};
-    int val = getClosestToZero(in1);
-    std::cout << val << std::endl;
+    /*std::vector<int> getClosestIn = {-9,5,-1,8,6, 1};
+    int val = getClosestToZero(getClosestIn);
+    std::cout << val << std::endl;*/
     
+    std::vector<int> getChunksIn = {5};
+    std::size_t noChunks = countChunks(getChunksIn);
+    std::cout << noChunks << std::endl;
     return 0;
 }
