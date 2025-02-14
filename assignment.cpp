@@ -1,5 +1,9 @@
 #include <vector>
 #include <cstdint>
+#include <iostream>
+
+#include <ranges>
+#include <algorithm>
 
 #include "INode.h"
 
@@ -16,6 +20,21 @@
  * then consider the positive element to be "closer" to zero.
  */
 int getClosestToZero(const std::vector<int>& arr) {
+    if (arr.empty()) throw std::invalid_argument("array is empty");
+    /*auto closest = arr[0];
+    
+    for (auto n : arr) {
+        if (abs(n) < abs(closest) ||
+           (abs(n) == abs(closest) && n > closest)) {
+            closest = n;
+        }
+    }
+    return closest;*/
+
+    //sort according to comp func, then pick smallest index
+    return *std::ranges::min_element(arr, [](int a, int b) {
+        return std::abs(a) < std::abs(b) || (std::abs(a) == std::abs(b) && a > b);
+    });
 }
 
 /**
@@ -27,6 +46,9 @@ int getClosestToZero(const std::vector<int>& arr) {
  * Example: [5, 4, 0, 0, -1, 0, 2, 0, 0] contains 3 chunks
  */
 std::size_t countChunks(const std::vector<int>& arr) {
+    if (arr.empty()) throw std::invalid_argument("array is empty");
+    
+    return 0;
 }
 
 /**
@@ -39,6 +61,7 @@ std::size_t countChunks(const std::vector<int>& arr) {
  * Node root is assumed to be at the level 0. All its children are level 1, etc.
  */
 int getLevelSum(const INode& root, std::size_t n) {
+    return 0;
 }
 
 /**
@@ -56,4 +79,14 @@ int getLevelSum(const INode& root, std::size_t n) {
  * the function should return [2, 3].
  */
 std::vector<std::size_t> getReversalsToSort(const std::vector<int>& arr) {
+    std::vector<std::size_t> ret;
+    return ret;
+}
+
+int main() {
+    std::vector<int> in1 = {-9,5,-1,8,6, 1};
+    int val = getClosestToZero(in1);
+    std::cout << val << std::endl;
+    
+    return 0;
 }
