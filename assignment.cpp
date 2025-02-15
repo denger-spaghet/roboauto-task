@@ -70,9 +70,9 @@ std::size_t countChunks(const std::vector<int>& arr) {
  * 
  * Node root is assumed to be at the level 0. All its children are level 1, etc.
  */
-int getLevelSum(const INode& root, std::size_t n) {
+/*int getLevelSum(const INode& root, std::size_t n) {
     return 0;
-}
+}*/
 
 /**
  * Imagine a sort algorithm, that sorts array of integers by repeatedly reversing
@@ -89,7 +89,33 @@ int getLevelSum(const INode& root, std::size_t n) {
  * the function should return [2, 3].
  */
 std::vector<std::size_t> getReversalsToSort(const std::vector<int>& arr) {
+    if (arr.empty()) throw std::invalid_argument("array is empty");
+
+    std::vector<int> temp = arr;
+
     std::vector<std::size_t> ret;
+
+    auto it = temp.end();
+
+    while(it != temp.begin()){
+        auto max = std::ranges::max_element(temp.begin(), it);
+
+        if(it - 1 == max ){
+            it --;
+            continue;
+        }
+
+        if(max != temp.begin()) {
+            std::ranges::reverse(temp.begin(), max + 1);
+            ret.push_back(std::ranges::distance(temp.begin(), max + 1));
+        }
+
+        std::ranges::reverse(temp.begin(), it);
+        ret.push_back(std::ranges::distance(temp.begin(), it));
+
+        it --;
+    }
+
     return ret;
 }
 
@@ -98,8 +124,11 @@ int main() {
     int val = getClosestToZero(getClosestIn);
     std::cout << val << std::endl;*/
     
-    std::vector<int> getChunksIn = {5};
-    std::size_t noChunks = countChunks(getChunksIn);
-    std::cout << noChunks << std::endl;
+    std::vector<int> arr = {12,13,11,14};
+    std::vector<std::size_t> result = getReversalsToSort(arr);
+    for (int num : result) {
+        std::cout << num << " ";
+    }
+    std::cout << "\n";
     return 0;
 }
