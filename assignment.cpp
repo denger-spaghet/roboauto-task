@@ -4,6 +4,7 @@
 
 #include <ranges>
 #include <algorithm>
+#include <chrono>
 
 #include "INode.h"
 
@@ -51,7 +52,7 @@ std::size_t countChunks(const std::vector<int>& arr) {
     std::size_t cnt = 0;
     auto it = arr.begin();
 
-    while(it != arr.end()) {
+    while(it < arr.end()) {
         it = std::ranges::find_if(it, arr.end(), [](int x) { return x != 0; }); 
         if(it == arr.end()) break;
         cnt ++;
@@ -92,43 +93,45 @@ std::vector<std::size_t> getReversalsToSort(const std::vector<int>& arr) {
     if (arr.empty()) throw std::invalid_argument("array is empty");
 
     std::vector<int> temp = arr;
-
     std::vector<std::size_t> ret;
 
     auto it = temp.end();
 
-    while(it != temp.begin()){
+    while(it > temp.begin()){
         auto max = std::ranges::max_element(temp.begin(), it);
 
-        if(it - 1 == max ){
-            it --;
+        if(max == it - 1){
+            it--;
             continue;
         }
 
         if(max != temp.begin()) {
             std::ranges::reverse(temp.begin(), max + 1);
-            ret.push_back(std::ranges::distance(temp.begin(), max + 1));
+            ret.push_back(static_cast<std::size_t>(std::ranges::distance(temp.begin(), max) + 1));
         }
 
         std::ranges::reverse(temp.begin(), it);
-        ret.push_back(std::ranges::distance(temp.begin(), it));
+        ret.push_back(static_cast<std::size_t>(std::ranges::distance(temp.begin(), it)));
 
-        it --;
+        it--;
     }
 
     return ret;
 }
 
 int main() {
-    /*std::vector<int> getClosestIn = {-9,5,-1,8,6, 1};
-    int val = getClosestToZero(getClosestIn);
-    std::cout << val << std::endl;*/
-    
     std::vector<int> arr = {12,13,11,14};
+    auto start = std::chrono::high_resolution_clock::now();
+
     std::vector<std::size_t> result = getReversalsToSort(arr);
+
+    auto stop = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     for (int num : result) {
         std::cout << num << " ";
     }
     std::cout << "\n";
+    std::cout << "time:" << duration.count() << std::endl;
     return 0;
 }
