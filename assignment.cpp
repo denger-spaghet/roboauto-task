@@ -2,9 +2,9 @@
 #include <cstdint>
 #include <iostream>
 
+#include <queue>
 #include <ranges>
 #include <algorithm>
-#include <chrono>
 
 #include "INode.h"
 
@@ -22,17 +22,7 @@
  */
 int getClosestToZero(const std::vector<int>& arr) {
     if (arr.empty()) throw std::invalid_argument("array is empty");
-    /*auto closest = arr[0];
-    
-    for (auto n : arr) {
-        if (abs(n) < abs(closest) ||
-           (abs(n) == abs(closest) && n > closest)) {
-            closest = n;
-        }
-    }
-    return closest;*/
 
-    //sort according to comp func, then pick smallest index
     return *std::ranges::min_element(arr, [](int a, int b) {
         return std::abs(a) < std::abs(b) || (std::abs(a) == std::abs(b) && a > b);
     });
@@ -71,9 +61,32 @@ std::size_t countChunks(const std::vector<int>& arr) {
  * 
  * Node root is assumed to be at the level 0. All its children are level 1, etc.
  */
-/*int getLevelSum(const INode& root, std::size_t n) {
-    return 0;
-}*/
+int getLevelSum(const INode& root, std::size_t n) {
+    std::queue<std::pair<const INode*, std::size_t>> q;
+    q.push({&root, 0}); 
+
+    int sum = 0;
+    bool found = false;
+    
+    while (!q.empty()) {
+        auto [node, level] = q.front();
+        q.pop();
+
+        if (level == n) {
+            sum += node->value();
+            found = true;
+            continue;
+        }
+
+        for (const auto& child : node->children()) {
+            q.push({child.get(), level + 1});
+        }
+    }
+
+    if(!found) throw std::out_of_range("no such level in the tree");
+
+    return sum;
+}
 
 /**
  * Imagine a sort algorithm, that sorts array of integers by repeatedly reversing
@@ -117,21 +130,4 @@ std::vector<std::size_t> getReversalsToSort(const std::vector<int>& arr) {
     }
 
     return ret;
-}
-
-int main() {
-    std::vector<int> arr = {12,13,11,14};
-    auto start = std::chrono::high_resolution_clock::now();
-
-    std::vector<std::size_t> result = getReversalsToSort(arr);
-
-    auto stop = std::chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    for (int num : result) {
-        std::cout << num << " ";
-    }
-    std::cout << "\n";
-    std::cout << "time:" << duration.count() << std::endl;
-    return 0;
 }
